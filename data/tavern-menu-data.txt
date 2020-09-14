@@ -1,0 +1,5 @@
+shandy,Dragon's Breath,5.91
+elixir,Shirley's Temple,4.12
+meal,Goblet of LaCroix,1.22
+desert dessert,Pickled Camel Hump,7.33
+elixir,Iced Boilermaker,11.22
