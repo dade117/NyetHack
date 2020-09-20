@@ -1,11 +1,10 @@
-/*
+package com.bignerdranch.nyethack/*
     This file contains exercises from the Kotlin Programming
     Big Nerd Ranch book Ch.6 Null Safety and Exceptions, Ch. 7 Strings, & Ch. 8
     Numbers.
 
     - Daniel De Leon II
 */
-import kotlin.math.roundToInt
 import java.io.File
 
 const val TAVERN_NAME = "Taernyl's Folly"
@@ -21,21 +20,21 @@ val menuList = File("data/tavern-menu-data.txt").readText().split("\n")
 
 fun main() {
     /*
-    if(patronList.contains("Eli")){
+    if(com.bignerdranch.nyethack.getPatronList.contains("Eli")){
         println("The tavern master says: Eli's in the back playing cards.")
     } else {
         println("The tavern master says: Eli is not here.")
     }
 
-    if(patronList.containsAll(listOf("Sophie", "Mordoc"))){
+    if(com.bignerdranch.nyethack.getPatronList.containsAll(listOf("Sophie", "Mordoc"))){
         println("The tavern master says: Yea, they're seated by the stew kettle.")
     } else {
         println("The tavern master says: Nay, they departed hours ago.")
     }
      */
 
-    //placeOrder("shandy,Dragon's Breath, 5.91")
-    //placeOrder("elixir,Shirley's Temple,4.12")
+    //com.bignerdranch.nyethack.placeOrder("shandy,Dragon's Breath, 5.91")
+    //com.bignerdranch.nyethack.placeOrder("elixir,Shirley's Temple,4.12")
 
     var temp = 5
 
@@ -175,7 +174,7 @@ fun performPurchase(price:Double, patronName:String): Boolean {
 }
 
 private fun displayPatronBalances(){
-    patronGold.forEach{patron, balance ->
+    patronGold.forEach{ patron, balance ->
         println("$patron balance: ${"%.2f".format(balance)}")
     }
 }
