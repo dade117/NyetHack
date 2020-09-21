@@ -1,7 +1,7 @@
 package com.bignerdranch.nyethack
 
 fun main() {
-    val player = Player()
+    val player = Player("madrigal")
     player.castFireball()
 
     // Aura
