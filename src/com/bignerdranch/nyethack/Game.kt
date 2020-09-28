@@ -1,35 +1,113 @@
 package com.bignerdranch.nyethack
 
+import java.lang.Exception
+import java.lang.IllegalStateException
+import kotlin.system.exitProcess
+
 fun main() {
-    val player = Player("madrigal")
-    player.castFireball()
+    Game.play()
+}
 
-    // Aura
-    val auraColor = player.auraColor()
-    //println(auraColor)
+object Game {
+    private val player = Player("madrigal")
+    private var currentRoom:Room = TownSquare()
 
-    // status messages based on player health status
-    /*
-    val healthStatus = if (healthPoints == 100){ "is in excellent condition!" }
-        else if (healthPoints in 90..99){ "has a few scratches. Not too shabby!" }
-        else if (healthPoints in 75..89){
-            if (isBlessed){ "has minor wounds but is healing quickly!" }
-            else { "has minor wounds. Be careful.." }
+    private var worldMap = listOf(
+            listOf(currentRoom, Room("Tavern"), Room("Back Room")),
+            listOf(Room("Long Corridor"), Room("Generic Room"))
+    )
+
+    init {
+        println("Welcome, adventurer")
+        player.castFireball()
+    }
+
+    fun play(){
+        while(true){
+            println(currentRoom.description())
+            println(currentRoom.load())
+
+            // Player Status
+            printPlayerStatus(player)
+
+            print(">Enter your command:")
+            println(GameInput(readLine()).processCommand())
         }
-        else if (healthPoints in 15..74){ "is seriously hurt. Seek medical aid soon." }
-        else { "is in awful condition!" }
-    */
+    }
 
-    // player status
-    printPlayerStatus(player)
+    private fun printPlayerStatus(player: Player) {
+        println("(Aura: ${player.auraColor()}) " +
+                "(Blessed: ${if (player.isBlessed) "Yes" else "No"})")
+        println("${player.name} ${player.formatHealthStatus()}")
+    }
 
-    // Aura
-    player.auraColor()
+    private class GameInput(arg:String?){
+        private val input = arg?:""
+        val command = input.split(" ")[0]
+        val argument = input.split(" ").getOrElse(1) { "" }
+
+        fun processCommand() = when(command.toLowerCase()){
+            "move" -> move(argument)
+            "exit", "quit" -> {
+                println("Goodbye, adventurer")
+                exitProcess(0)
+            }
+            "map" -> {
+                //println(player.currentPosition)
+                map(player.currentPosition)
+            }
+            "ring" -> {
+                try {
+                    if(currentRoom is TownSquare){
+                        (currentRoom as TownSquare).ringBell(player)
+                    } else {
+                        println("You are currently not in the Town Square.")
+                    }
+                } catch (e:Exception) {
+                    "Sorry, something went wrong"
+                }
+            }
+            else -> commandNotFound()
+        }
+
+        private fun commandNotFound() = "I'm not quite sure what you're trying to do.."
+    }
+
+    private fun move(directionInput:String) =
+            try{
+                val direction = Direction.valueOf(directionInput.toUpperCase())
+                val newPosition = direction.updateCoordinate(player.currentPosition)
+                if(!newPosition.isInBounds){
+                    throw IllegalStateException("$direction is out of bounds.")
+                }
+
+                val newRoom = worldMap[newPosition.y][newPosition.x]
+                player.currentPosition = newPosition
+                currentRoom = newRoom
+                "Okay, you move $direction to the ${newRoom.name}.\n${newRoom.load()}"
+            } catch (e:Exception){
+                "Invalid direction: $directionInput"
+            }
+
+    private fun map(coordinate: Coordinate):String{
+        var line1 = "OOO"
+        var line2 = "OO"
+
+        if(coordinate.y == 0){
+            line2 = "OO"
+           when(coordinate.x){
+               0 -> line1 = "XOO"
+               1 -> line1 = "OXO"
+               2 -> line1 = "OOX"
+           }
+        } else {
+            line1 = "OOO"
+            when(coordinate.x){
+                0 -> line2 = "XO"
+                1 -> line2 = "OX"
+            }
+        }
+
+        return line1 + "\n" + line2
+    }
 }
-
-private fun printPlayerStatus(player: Player) {
-    println("(Aura: ${player.auraColor()}) " +
-            "(Blessed: ${if (player.isBlessed) "Yes" else "No"})")
-    println("${player.name} ${player.formatHealthStatus()}")
-}
-
