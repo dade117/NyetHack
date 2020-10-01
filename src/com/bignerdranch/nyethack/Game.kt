@@ -2,6 +2,7 @@ package com.bignerdranch.nyethack
 
 import java.lang.Exception
 import java.lang.IllegalStateException
+import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 fun main() {
@@ -9,7 +10,7 @@ fun main() {
 }
 
 object Game {
-    private val player = Player("madrigal")
+    private val player = Player("Danyo")
     private var currentRoom:Room = TownSquare()
 
     private var worldMap = listOf(
@@ -52,10 +53,7 @@ object Game {
                 println("Goodbye, adventurer")
                 exitProcess(0)
             }
-            "map" -> {
-                //println(player.currentPosition)
-                map(player.currentPosition)
-            }
+            "map" -> map(player.currentPosition)
             "ring" -> {
                 try {
                     if(currentRoom is TownSquare){
@@ -67,6 +65,7 @@ object Game {
                     "Sorry, something went wrong"
                 }
             }
+            "fight" -> fight()
             else -> commandNotFound()
         }
 
@@ -109,5 +108,29 @@ object Game {
         }
 
         return line1 + "\n" + line2
+    }
+
+    private fun fight() = currentRoom.monster?.let {
+        while(player.healthPoints > 0 && it.healthPoints > 0){
+            slay(it)
+            Thread.sleep(1000)
+        }
+
+        "Combat complete"
+    }?:"There's no beast to slay here."
+
+    private fun slay(monster:Monster){
+        println("${monster.name} did ${monster.attack(player)} damage!")
+        println("${player.name} did ${player.attack(monster)} damage!")
+
+        if(player.healthPoints <= 0){
+            println(">>>> You have been defeated! Thanks for playing. <<<<")
+            exitProcess(0)
+        }
+
+        if(monster.healthPoints <= 0){
+            println(">>>> ${monster.name} has been defeated! <<<<")
+            currentRoom.monster = null
+        }
     }
 }
