@@ -61,8 +61,7 @@ class Player(
     private fun selectHometown() = File("data/towns.txt")
             .readText()
             .split("\n")
-            .shuffled()
-            .first()
+            .random()
 
     override fun attack(opponent: Fightable): Int {
         val damageDealt = if(isBlessed){

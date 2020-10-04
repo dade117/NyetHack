@@ -1,13 +1,20 @@
-package com.bignerdranch.nyethack/*
-    This file contains exercises from the Kotlin Programming
-    Big Nerd Ranch book Ch.6 Null Safety and Exceptions, Ch. 7 Strings, & Ch. 8
-    Numbers.
-
-    - Daniel De Leon II
-*/
+package com.bignerdranch.nyethack
 import java.io.File
+import com.bignerdranch.nyethack.extensions.random
 
 const val TAVERN_NAME = "Taernyl's Folly"
+
+val String.toDragonSpeak
+    get() = this.replace(Regex("[aeiouAEIOU]")){
+        when(it.value){
+            "a","A"->"4"
+            "e","E"->"3"
+            "i","I"->"1"
+            "o","O"->"0"
+            "u","U"->"|_|"
+            else->it.value
+        }
+    }
 
 // Currency vars
 val patronGold = mutableMapOf<String, Double>()
@@ -40,8 +47,8 @@ fun main() {
 
     (0..9).forEach{
         temp += it
-        val first = patronList.shuffled().first()
-        val last = lastName.shuffled().first()
+        val first = patronList.random()
+        val last = lastName.random()
         val name = "$first $last"
         uniquePatrons += name
     }
@@ -52,7 +59,7 @@ fun main() {
 
     var orderCount = 0
     while(orderCount <= 9){
-        placeOrder(uniquePatrons.shuffled().first(), menuList.shuffled().first())
+        placeOrder(uniquePatrons.random(), menuList.random())
         orderCount++
 
         if(uniquePatrons.isEmpty()){
@@ -78,7 +85,7 @@ private fun placeOrder(patronName:String, menuData:String){
         println(message)
 
         val phrase = if(name == "Dragon's Breath"){
-            "$patronName exclaims: ${toDragonSpeak("Ah delicious $name!\n")}"
+            "$patronName exclaims: ${"Ah delicious $name!\n".toDragonSpeak}"
         } else {
             "$patronName says: Thanks for the $name.\n"
         }
@@ -91,17 +98,6 @@ private fun placeOrder(patronName:String, menuData:String){
     }
 }
 
-private fun toDragonSpeak(phrase:String)=
-        phrase.replace(Regex("[aeiouAEIOU]")){
-            when(it.value){
-                "a","A"->"4"
-                "e","E"->"3"
-                "i","I"->"1"
-                "o","O"->"0"
-                "u","U"->"|_|"
-                else->it.value
-            }
-        }
 
 fun printMenu(){
     println("\t*** Welcome to $TAVERN_NAME ***")
